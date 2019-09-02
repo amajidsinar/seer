@@ -120,7 +120,7 @@ class Trainer ():
         training_performance_metrics = defaultdict(list)
         validation_performance_metrics = defaultdict(list)
         
-        print(f'Learning rate: {self.optimizer.param_groups[0]['lr'])
+        print(f'Learning rate: {self.optimizer.param_groups[0]["lr"]}')
         for dataset in self.dataloaders.keys():
             single_dataset_performance_metrics = self._train_for_single_dataset(dataset, epoch)
             for metric_name, metric_value in single_dataset_performance_metrics.items():
@@ -129,7 +129,7 @@ class Trainer ():
                 elif bool(re.search('val', dataset)):
                     validation_performance_metrics[metric_name].append(metric_value)
         self.lr_scheduler.step()
-        print(f'Learning rate: {self.optimizer.param_groups[0]['lr'])
+        print(f'Learning rate: {self.optimizer.param_groups[0]["lr"]}')
         print(f'#################################################################################')
 
         for metric_name, metric_value in training_performance_metrics.items():
