@@ -127,6 +127,7 @@ class Trainer ():
                 if bool(re.search('train', dataset)):
                     training_performance_metrics[metric_name].append(metric_value)
                 elif bool(re.search('val', dataset)):
+                    validation_performance_metrics[metric_name].append(metric_value)
         if self.lr_scheduler:
             self.lr_scheduler.step()
         print(f'#################################################################################')
