@@ -119,8 +119,9 @@ class Trainer ():
     def _train_for_all_datasets_in_single_epoch(self, epoch):
         training_performance_metrics = defaultdict(list)
         validation_performance_metrics = defaultdict(list)
-        
-        print(f'Learning rate: {self.optimizer.param_groups[0]["lr"]}')
+        lr = self.optimizer.param_groups[0]["lr"]
+        print(f'Learning rate: {lr}')
+        self.logger.log_metric(name = 'lr', value = lr, step = epoch)
         for dataset in self.dataloaders.keys():
             single_dataset_performance_metrics = self._train_for_single_dataset(dataset, epoch)
             for metric_name, metric_value in single_dataset_performance_metrics.items():
