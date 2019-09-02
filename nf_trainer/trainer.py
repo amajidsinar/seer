@@ -12,7 +12,7 @@ from pathlib import Path
 
 
 class Trainer ():
-    def __init__(self, model_name, trainer_configuration, model, dataloaders, loss, metrics, optimizer, lr_scheduler, device, logger, resume = Optional):
+    def __init__(self, model_name, trainer_configuration, model, dataloaders, loss, metrics, optimizer, device, logger, lr_scheduler = Optional, resume = Optional):
         self.model_name = model_name
         self.trainer_configuration = trainer_configuration
         self.model = model
@@ -127,9 +127,8 @@ class Trainer ():
                 if bool(re.search('train', dataset)):
                     training_performance_metrics[metric_name].append(metric_value)
                 elif bool(re.search('val', dataset)):
-                    validation_performance_metrics[metric_name].append(metric_value)
-        self.lr_scheduler.step()
-        print(f'Learning rate: {self.optimizer.param_groups[0]["lr"]}')
+        if self.lr_scheduler:
+            self.lr_scheduler.step()
         print(f'#################################################################################')
 
         for metric_name, metric_value in training_performance_metrics.items():
