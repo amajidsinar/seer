@@ -12,7 +12,7 @@ from pathlib import Path
 
 
 class Trainer ():
-    def __init__(self, model_name, trainer_configuration, model, dataloaders, loss, metrics, optimizer, device, logger, resume = Optional):
+    def __init__(self, model_name, trainer_configuration, model, dataloaders, loss, metrics, optimizer, lr_scheduler, device, logger, resume = Optional):
         self.model_name = model_name
         self.trainer_configuration = trainer_configuration
         self.model = model
@@ -20,6 +20,7 @@ class Trainer ():
         self.loss = loss
         self.metrics = metrics
         self.optimizer = optimizer
+        self.lr_scheduler = lr_scheduler
         self.device = device
         self.n_epochs = trainer_configuration["n_epochs"]
         self.checkpoint_path = trainer_configuration["checkpoint_path"]
@@ -119,6 +120,7 @@ class Trainer ():
         training_performance_metrics = defaultdict(list)
         validation_performance_metrics = defaultdict(list)
         
+        print(f'Learning rate: {self.optimizer.param_groups[0]['lr'])
         for dataset in self.dataloaders.keys():
             single_dataset_performance_metrics = self._train_for_single_dataset(dataset, epoch)
             for metric_name, metric_value in single_dataset_performance_metrics.items():
@@ -126,6 +128,8 @@ class Trainer ():
                     training_performance_metrics[metric_name].append(metric_value)
                 elif bool(re.search('val', dataset)):
                     validation_performance_metrics[metric_name].append(metric_value)
+        self.lr_scheduler.step()
+        print(f'Learning rate: {self.optimizer.param_groups[0]['lr'])
         print(f'#################################################################################')
 
         for metric_name, metric_value in training_performance_metrics.items():
