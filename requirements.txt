@@ -1,0 +1,10 @@
+torchetl
+tqdm
+pandas
+sklearn
+efficientnet_pytorch
+torch
+torchvision
+comet_ml
+opencv-python
+scikit_image

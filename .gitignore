@@ -1,0 +1,8 @@
+nf_trainer/__pycache__
+nf_trainer/architecture/__pycache__
+nf_trainer/datasets/__pycache__
+nf_trainer/dataloaders/__pycache__
+nf_trainer/metrics/__pycache__
+nf_trainer/models/__pycache__
+nf_trainer/transforms/__pycache__
+
