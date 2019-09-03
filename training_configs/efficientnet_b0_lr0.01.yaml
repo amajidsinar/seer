@@ -1,0 +1,75 @@
+trainer:
+  version: 69
+  n_epochs: 999999
+  checkpoint_path: checkpoints
+  patience_limit: 999999
+  save_best_metric: ['f1', 'loss']
+
+model:
+  module: EfficientNet_B1
+  args:
+    use_pretrained: True
+    feature_extract: False
+    n_class: 2
+    gpu_id: 0
+
+optimizer:
+  module: SGD
+  args:
+    lr: 0.01
+    momentum: 0
+
+loss:
+  module: CrossEntropyLoss
+  args: {}
+
+comet_ml:
+  module_experiment: Experiment
+  module_existing_experiment: ExistingExperiment
+  args:
+    api_key: 9mPrEpU6XpLG2Pc6MO811ca4e
+    project_name: train-face-gender
+    workspace: hyperion-rg
+
+metrics:
+  module: [accuracy, precision, recall, f1]
+
+partition:
+  train_nodeflux_employee:
+    transforms_module: train_transforms
+    transforms_args: 
+      input_size: 224
+    dataset_module: TransformAndLoad
+    dataset_args:
+      parent_directory: 'data/images/nodeflux_employee'
+      csv_file: 'data/metadata/nodeflux_employee/nodeflux_employee_train_with_bbox_and_landmark.csv'
+      bounding_box_column_index: [2,5]
+      landmark_column_index: [6,15]
+      apply_face_alignment: True
+      apply_face_cropping: False
+    dataloader_module: BaseDataLoader
+    dataloader_args:
+      batch_size: 8
+      shuffle: True
+      pin_memory: True
+      num_workers: 4
+
+  validation_nodeflux_employee:
+    transforms_module: validation_transforms
+    transforms_args: 
+      input_size: 224
+    dataset_module: TransformAndLoad
+    dataset_args:
+      parent_directory: data/images/nodeflux_employee
+      csv_file: data/metadata/nodeflux_employee/nodeflux_employee_validation_with_bbox_and_landmark.csv
+      bounding_box_column_index: [2,5]
+      landmark_column_index: [6,15]
+      apply_face_alignment: True
+      apply_face_cropping: False
+    dataloader_module: BaseDataLoader
+    dataloader_args:
+      batch_size: 8
+      shuffle: False
+      pin_memory: True
+      num_workers: 4
+
