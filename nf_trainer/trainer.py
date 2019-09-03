@@ -56,10 +56,11 @@ class Trainer ():
         self.logger.log_parameter(name = "loss", value = loss_name)
 
         # dump scheduler
-        self.lr_scheduler_name = lr_scheduler.__class__.__name__
-        self.logger.log_parameter(name = 'scheduler', value = self.lr_scheduler_name)
-        for scheduler_param_name, scheduler_param_value in self.lr_scheduler.__dict__.items():
-            logger.log_parameter(name = scheduler_param_name, value = scheduler_param_value)
+        if self.lr_scheduler:
+            self.lr_scheduler_name = lr_scheduler.__class__.__name__
+            self.logger.log_parameter(name = 'scheduler', value = self.lr_scheduler_name)
+            for scheduler_param_name, scheduler_param_value in self.lr_scheduler.__dict__.items():
+                logger.log_parameter(name = scheduler_param_name, value = scheduler_param_value)
 
 
     def _train_for_single_dataset(self, dataset, epoch):
