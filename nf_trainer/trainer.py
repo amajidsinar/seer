@@ -41,21 +41,29 @@ class Trainer ():
                 print("Finished loading checkpoint")
             except FileNotFoundError:
                 print(f'No checkpoint found at {resume}')
+
         # dump optimizer hyperparams
         optimizer_name = optimizer.__class__.__name__
         self.logger.log_parameter(name = "optimizer", value = optimizer_name)
-        for hyperparam_name, hyperparam_value in optimizer.param_groups[0].items():
-            if hyperparam_name == 'params':
+        for optimizer_param_name, optimizer_param_value in optimizer.param_groups[0].items():
+            if optimizer_param_name == 'params':
                 pass
             else:
-                logger.log_parameter(name = hyperparam_name, value = hyperparam_value)
+                logger.log_parameter(name = optimizer_param_name, value = optimizer_param_value)
         
-        # dump 
+        # dump loss
         loss_name = loss.__class__.__name__
         self.logger.log_parameter(name = "loss", value = loss_name)
 
+        # dump scheduler
+        self.lr_scheduler_name = lr_scheduler.__class__.__name__
+        self.logger.log_parameter(name = 'scheduler', value = self.lr_scheduler_name)
+        for scheduler_param_name, scheduler_param_value in self.lr_scheduler.__dict__.items():
+            logger.log_parameter(name = scheduler_param_name, value = scheduler_param_value)
+
 
     def _train_for_single_dataset(self, dataset, epoch):
+        pdb.set_trace()
         running_metrics = defaultdict(list)
         output = defaultdict(list)
         performance_metrics = defaultdict(list)
