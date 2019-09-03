@@ -64,7 +64,6 @@ class Trainer ():
 
 
     def _train_for_single_dataset(self, dataset, epoch):
-        pdb.set_trace()
         running_metrics = defaultdict(list)
         output = defaultdict(list)
         performance_metrics = defaultdict(list)
