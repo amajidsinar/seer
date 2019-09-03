@@ -15,8 +15,9 @@ At the moment, you can easily:
   - [Installation](#installation)
   - [Getting Started](#getting-started)
     - [The grand idea](#the-big-idea)
-    - [A peek at train.py](#deeper-look-at-trainpy)
-    - [A peek at example configuration file](#deeper-look-at-example-configuration-file)
+    - [A peek at train.py](#a-peek-at-trainpy)
+    - [A peek at example configuration file](#A-peek-at-example-configuration-file)
+    - [On a side note](#On-a-side-note)
   - [Structure](#structure)
 
 
@@ -28,7 +29,7 @@ pip3 install -r requirements.txt
 
 ### Getting Started
 
-It's hard to fully exploit this trainer without understand its power and limitations
+It's hard to fully exploit this trainer without understand its power and hence, limitations
 
 #### The grand idea
 
@@ -91,31 +92,50 @@ Since we have params object somewhere up in the train.py, it would be nice if we
 optimizer = create_instance(config['optimizer'], torch.optim, params=model.parameters())
 ```
 
-
-
-
 #### A peek at example configuration file
 
-The only 
+The configuration file follows a specific pattern since we need to have key value pairs of module and args to instantiate objects. With a closer look, some dictionaries does not obey this rule: trainer, comet_ml, partition, and metrics. However, they still adhere similar pattern to what we have seen before.
+
+#### On a side note
+
+You don't have to use YAML, since the input to create instance is a dictionary. However, YAML is really intuitive so why not?
+Configuration file name is very important, since the model name is derived from configuration file
 
 ### Structure
 
 Here is the structure of the library
+```
 - nf_trainer
     - architecture
     - dataloaders
     - datasets
-    - lib
     - metrics
     - models
-    - prepare
     - architecture
     - transforms
+```
+Make sure to put the correct stuff into the correct place. Currently, we support the following
+```
+- architecture
+    - EfficientNet-B0
+    - EfficientNet-B1
+    - MobileNet_v3
+- dataloaders
+    - BaseDataLoader
+- metrics
+    - Accuracy
+    - Precision
+    - Recall
+    - F1
+- models
+    - EfficientNet_B0
+    - EfficientNet_B1
+    - MobileNet_v3
+    - ShuffleNet_v2_x1_0
+- transforms
+    - face
 
-architecture folder stores model architecture / backbone such as efficientnet and mobilenet. If you want to use other architectures, make sure to put them
-in this folder  
-dataloaders folder store dataloaders inherited from torch.utils.data.DataLoader
-datasets folder store datasets inherited from torch.utils.data.Dataset
-lib folder store trained models that inherits from torch.nn.Models
-metrics folder store 
+
+
+
 
