@@ -38,9 +38,6 @@ config['model']['args']['gpu_id'] = args.gpu_id
 device = torch.device(f"cuda:{config['model']['args']['gpu_id']}" if config['model']['args']['gpu_id'] >= 0 else "cpu")
 print(f'device {device}')
 
-model_name = Path(args.configuration_path).stem
-print(f'Training model {model_name}')
-
 model = create_instance(config['model'], nf_models)
 
 optimizer = create_instance(config['optimizer'], torch.optim, params=model.parameters())
@@ -52,7 +49,6 @@ except KeyError:
             
 dataloaders = create_instance_dataloader(config['partition'], nf_transforms, torchetl.etl, nf_dataloaders)
 
-
 loss = create_instance(config['loss'], torch.nn)
 
 metrics = create_instance_metrics(config['metrics'], nf_metrics)
@@ -61,7 +57,7 @@ metrics = create_instance_metrics(config['metrics'], nf_metrics)
 
 if args.resume:
     checkpoint = torch.load(args.resume)
-    experiment_key = checkpoint['previous_key']
+    experiment_key = checkpoint['experiment_key']
     logger = create_instance({
         "module": config['comet_ml']['module_existing_experiment'],
         "args": config['comet_ml']['args']
@@ -72,10 +68,9 @@ else:
         "args": config['comet_ml']['args']
     }, comet_ml)
 
-try:
-    logger.set_name(model_name)
-except KeyError:
-    pass
+model_name = Path(args.configuration_path).stem
+logger.set_name(model_name)
+print(f'Training model {model_name}')
 
 trainer = Trainer(
     model_name = model_name,

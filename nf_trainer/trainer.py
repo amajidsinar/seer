@@ -181,7 +181,7 @@ class Trainer ():
             'epoch': epoch,
             'model_state_dict': self.model.state_dict(),
             'optimizer_state_dict': self.optimizer.state_dict(),
-            'previous_key': self.logger.get_key()
+            'experiment_key': self.logger.get_key()
             }
         #pdb.set_trace()
         model_params.update({'best_metric': best_metric})
