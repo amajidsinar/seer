@@ -12,7 +12,19 @@ from pathlib import Path
 
 
 class Trainer ():
-    def __init__(self, model_name, trainer_configuration, model, dataloaders, loss, metrics, optimizer, device, logger, lr_scheduler = Optional, resume = Optional):
+    def __init__(self, 
+                 model_name: str, 
+                 trainer_configuration: dict, 
+                 model: torch.nn.Module, 
+                 dataloaders: torch.utils.data.DataLoader, 
+                 loss: torch.nn, 
+                 metrics: object, 
+                 optimizer: torch.optim, 
+                 device: torch.device, 
+                 logger: object, 
+                 lr_scheduler: torch.optim.lr_scheduler = Optional, 
+                 resume: str = Optional) -> None:
+
         self.model_name = model_name
         self.trainer_configuration = trainer_configuration
         self.model = model
@@ -63,7 +75,7 @@ class Trainer ():
                 logger.log_parameter(name = scheduler_param_name, value = scheduler_param_value)
 
 
-    def _train_for_single_dataset(self, dataset, epoch):
+    def _train_for_single_dataset(self, dataset: dict, epoch: int):
         running_metrics = defaultdict(list)
         output = defaultdict(list)
         performance_metrics = defaultdict(list)
@@ -124,7 +136,7 @@ class Trainer ():
         
         return performance_metrics
 
-    def _train_for_all_datasets_in_single_epoch(self, epoch):
+    def _train_for_all_datasets_in_single_epoch(self, epoch: int):
         training_performance_metrics = defaultdict(list)
         validation_performance_metrics = defaultdict(list)
         lr = self.optimizer.param_groups[0]["lr"]
@@ -156,7 +168,7 @@ class Trainer ():
 
         return validation_performance_metrics
     
-    def _save_model(self, suffix, best_metric : dict, epoch):
+    def _save_model(self, suffix : str, best_metric: dict, epoch: int):
 
         checkpoint_pth = f'{self.checkpoint_path}/{self.model_name}_{suffix}.pth'
         patience_counter = 0

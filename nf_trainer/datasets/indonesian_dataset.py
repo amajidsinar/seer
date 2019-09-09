@@ -13,10 +13,11 @@ class IndonesianDataset(BaseDataset):
         super().__init__(parent_directory, extension)
         try:
             self.csv_file = pd.read_csv(csv_file)
+            self.csv_file.drop_duplicates(subset=['NAMA'], inplace=True)
         except FileNotFoundError:
             print(f'Csv file not found at {csv_file}')        
 
-    def create_dataset_array_from_csv(self, verbose):
+    def create_dataset_array_from_csv(self, labels, verbose):
         """Create full dataset array from reading files
         Parameters
         ----------
@@ -26,7 +27,6 @@ class IndonesianDataset(BaseDataset):
         Tuple of X and y	
         """
         Dataset = namedtuple('Dataset', ['filename', 'target'])
-
         target = []
         filename = []
         # absolute path leading to file
@@ -34,12 +34,11 @@ class IndonesianDataset(BaseDataset):
             parent_length = len(self.parent_directory.parts)
             relative_path = full_path.parts[parent_length:]
             person_name = relative_path[0]
-            match_row = (self.csv_file[self.csv_file["NAMA"] == str(person_name)])
+            match_row = self.csv_file[self.csv_file["NAMA"] == str(person_name)]
             target_label = match_row["JENIS_KELAMIN"].values
-            for encoded_label, label in enumerate(self.labels):
-                if bool(label == target_label):
-                    target.append(encoded_label)
             filename.append(str(Path(*relative_path)))
+            target.append(target_label.item())
+            
             
         if verbose:
             print("Finished creating whole dataset array")

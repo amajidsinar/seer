@@ -187,8 +187,12 @@ def dump_bbox_and_landmark_to_csv(face_detection: object, parent_directory: Posi
             except ValueError:
                 print(f"Frontal face not detected on path {path[index]}")
                 pass
+
             except cv2.error:
                 pass
+            
+            except AttributeError:
+                print(f"Face not detected on path {path[index]}")
 
 
     print(f'Sucessfully dump into {save_to}')
