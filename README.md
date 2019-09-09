@@ -19,6 +19,7 @@ At the moment, you can easily:
     - [A peek at example configuration file](#A-peek-at-example-configuration-file)
     - [On a side note](#On-a-side-note)
   - [Structure](#structure)
+  - [FAQ](#faq)
 
 
 ### Installation
@@ -96,6 +97,8 @@ optimizer = create_instance(config['optimizer'], torch.optim, params=model.param
 
 The configuration file follows a specific pattern since we need to have key value pairs of module and args to instantiate objects. With a closer look, some dictionaries does not obey this rule: trainer, comet_ml, partition, and metrics. However, they still adhere similar pattern to what we have seen before.
 
+In addition, if an object is instantiated from using create_instance function, then
+
 #### On a side note
 
 You don't have to use YAML, since the input to create instance is a dictionary. However, YAML is really intuitive so why not?
@@ -134,6 +137,31 @@ Make sure to put the correct stuff into the correct place. Currently, we support
     - ShuffleNet_v2_x1_0
 - transforms
     - face
+
+```
+
+### FAQ
+How can I develop the yaml?   
+Follow the following pattern and remember that yaml can be parsed just like ordinary dictionary.
+
+```
+key:
+  module: YOUR-OBJECT-NAME
+  args:
+    ARGS-NAME-1: ARGS-VALUE-1
+    ARGS-NAME-2: ARGS-VALUE-2
+    ARGS-NAME-3: ARGS-VALUE-3
+```
+
+How can I instantiate new function from the dictionary above?  
+
+```
+new_function = create_instance(
+  config_params = YAML-FILE['key'],
+  module = importlib(PATH-TO-MODULE),
+) 
+```
+
 
 
 
