@@ -16,6 +16,9 @@ import importlib
 from typing import Iterable
 import pandas as pd
 import csv
+import nonechucks as nc
+
+
 
 def compute_normalization_values(files: Iterable):
     mean, std = 0., 0.
@@ -78,7 +81,7 @@ def create_instance_dataloader(config_params, transforms_module, dataset_module,
         dataset_args = partition_key_value['dataset_args']
         dataset_args['transform'] = transforms
         dataset = getattr(dataset_module, partition_key_value['dataset_module'])(**partition_key_value['dataset_args'])
-        #dataset = nc.SafeDataset(dataset)
+        dataset = nc.SafeDataset(dataset)
         dataloader_args = partition_key_value['dataloader_args']
         dataloader_args['dataset'] = dataset
         dataloader = getattr(dataloader_module, partition_key_value['dataloader_module'])(**dataloader_args)

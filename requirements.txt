@@ -8,3 +8,4 @@ torchvision
 comet_ml
 opencv-python
 scikit_image
+nonechucks

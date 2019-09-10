@@ -86,12 +86,12 @@ class Trainer ():
             print(f'Validating {dataset}')
             self.model.eval()
 
+
         for inputs, targets in tqdm(self.dataloaders[dataset]):   
             with elapsed_timer() as elapsed:
                 inputs, targets = inputs.to(self.device), targets.to(self.device)
                 # make sure the gradient is zero before forward pass
                 self.optimizer.zero_grad()
-
                 # forward pass
                 # track history only in train
                 with torch.set_grad_enabled(bool(re.search('train', dataset))):
