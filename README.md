@@ -19,6 +19,7 @@ At the moment, you can easily:
     - [A peek at example configuration file](#A-peek-at-example-configuration-file)
     - [On a side note](#On-a-side-note)
   - [Structure](#structure)
+  - [On Models](#on-models)
   - [FAQ](#faq)
 
 
@@ -119,10 +120,6 @@ Here is the structure of the library
 ```
 Make sure to put the correct stuff into the correct place. Currently, we support the following
 ```
-- architecture
-    - EfficientNet-B0
-    - EfficientNet-B1
-    - MobileNet_v3
 - dataloaders
     - BaseDataLoader
 - metrics
@@ -131,13 +128,97 @@ Make sure to put the correct stuff into the correct place. Currently, we support
     - Recall
     - F1
 - models
-    - EfficientNet_B0
-    - EfficientNet_B1
-    - MobileNet_v3
-    - ShuffleNet_v2_x1_0
+    - densenet
+      - densenet121
+      - densenet169
+      - densenet201
+      - densenet161
+    - dla
+      - dla60_res2net
+      - dla60_res2next
+      - dla34
+      - dla46_c
+      - dla46x_c
+      - dla60x_c
+      - dla60
+      - dla60x
+      - dla102
+      - dla102x
+      - dla102x2
+      - dla169
+    - dpn
+      - dpn68
+      - dpn68b
+      - dpn92
+      - dpn98
+      - dpn131
+      - dpn107
+    - mnasnet
+      - mnasnet_050
+      - mnasnet_075
+      - mnasnet_100
+      - mnasnet_b1
+      - mnasnet_140
+      - semnasnet_050
+      - semnasnet_075
+      - semnasnet_100
+      - mnasnet_a1
+      - semnasnet_140
+      - mnasnet_small
+    - mobilenet
+      - mobilenetv1_100
+      - mobilenetv2_100
+      - mobilenetv3_050
+      - mobilenetv3_075
+      - mobilenetv3_100
+    - fbnet
+      - fbnetc_100
+    - chamnet
+      - chamnetv1_100
+      - chamnetv2_100
+    - spasnet
+      - spnasnet_100
+    - efficientnet
+      - efficientnet_b0
+      - efficientnet_b1
+      - efficientnet_b2
+      - efficientnet_b3
+      - efficientnet_b4
+      - efficientnet_b5
+      - efficientnet_b6
+      - efficientnet_b7
+      - efficientnet_es
+      - efficientnet_em
+      - efficientnet_el
+      - tf_efficientnet_b0
+      - tf_efficientnet_b1
+      - tf_efficientnet_b2
+      - tf_efficientnet_b3
+      - tf_efficientnet_b4
+      - tf_efficientnet_b5
+      - tf_efficientnet_b6
+      - tf_efficientnet_b7
+      - tf_efficientnet_es
+      - tf_efficientnet_em
+      - tf_efficientnet_el
+    - mixnet
+      - mixnet_s
+      - mixnet_m
+      - mixnet_l
+      - mixnet_xl
+      - mixnet_xxl
+      - tf_mixnet_s
+      - tf_mixnet_m
+      - tf_mixnet_l
 - transforms
     - face
 
+```
+
+### On Models
+All models listed above have the following parameters
+```
+model(pretrained=False, num_classes=1000, iin_chans=3, **kwargs)
 ```
 
 ### FAQ
