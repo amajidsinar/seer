@@ -218,7 +218,7 @@ Make sure to put the correct stuff into the correct place. Currently, we support
 ### On Models
 All models listed above have the following parameters
 ```
-model(pretrained=False, num_classes=1000, iin_chans=3, **kwargs)
+model(pretrained=False, num_classes=1000, in_chans=3, **kwargs)
 ```
 
 ### FAQ
