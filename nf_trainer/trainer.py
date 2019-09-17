@@ -76,20 +76,22 @@ class Trainer():
             for scheduler_param_name, scheduler_param_value in self.lr_scheduler.__dict__.items():
                 logger.log_parameter(name = scheduler_param_name, value = scheduler_param_value)
 
-    def _calculate_and_log_aggregate_metrics(self):
+    def _calculate_and_log_aggregate_metrics(self, dataset, epoch):
+        performance_metrics = defaultdict(list)
         print(f'Logging into comet-ml')
         for metric in self.metrics:
             metric_name = metric.__name__
-            metric_value = metric(output['targets'], output['predictions'])
+            metric_value = metric(self.prediction_output['targets'], self.prediction_output['predictions'])
             performance_metrics[metric_name] = metric_value
             self.logger.log_metric(f'{dataset} {metric_name}', metric_value, step = epoch)
             print(f'{metric_name}: {metric_value}')
 
         return performance_metrics
 
-    def _calculate_and_log_running_metrics(self):
+    def _calculate_and_log_running_metrics(self, dataset, epoch):
+        performance_metrics = defaultdict(list)
         print(f'Logging into comet-ml')
-        for metric_name, metric_values in running_metrics.items():
+        for metric_name, metric_values in self.running_metrics.items():
             if metric_name == 'fps':
                 metric_value = np.mean(metric_values)
                 performance_metrics[metric_name] = np.mean(metric_value)
@@ -105,7 +107,7 @@ class Trainer():
         self.running_metrics = defaultdict(list)
         self.prediction_output = defaultdict(list)
 
-        performance_metrics = defaultdict(list)
+        
         if bool(re.search("train", dataset)):
             print(f'Training {dataset}')
             self.model.train()
@@ -141,8 +143,8 @@ class Trainer():
                     self.prediction_output['predictions'].extend(predictions)
                     self.prediction_output['targets'].extend(targets)
                     
-        performance_metrics = self._calculate_and_log_aggregate_metrics()
-        performance_metrics.update(self._calculate_and_log_running_metrics())
+        performance_metrics = self._calculate_and_log_aggregate_metrics(dataset, epoch)
+        performance_metrics.update(self._calculate_and_log_running_metrics(dataset, epoch))
         
         return performance_metrics
 
@@ -160,6 +162,7 @@ class Trainer():
                     training_performance_metrics[metric_name].append(metric_value)
                 elif bool(re.search('val', dataset)):
                     validation_performance_metrics[metric_name].append(metric_value)
+
         if self.lr_scheduler:
             self.lr_scheduler.step()
         print(f'#################################################################################')
