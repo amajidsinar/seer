@@ -10,8 +10,9 @@ from typing import Dict, Callable, List, Sequence, Optional
 import re
 from pathlib import Path
 
+__all__ = ['ClassificationTrainer']
 
-class Trainer ():
+class Trainer():
     def __init__(self, 
                  model_name: str, 
                  trainer_configuration: dict, 
@@ -41,6 +42,7 @@ class Trainer ():
         self.save_best_metric = trainer_configuration["save_best_metric"]
         self.best_metric = defaultdict(float)
         self.best_metric['loss'] = 999999
+
         if resume:
             try:
                 print(f'Loading checkpoint at {resume}')
@@ -74,10 +76,35 @@ class Trainer ():
             for scheduler_param_name, scheduler_param_value in self.lr_scheduler.__dict__.items():
                 logger.log_parameter(name = scheduler_param_name, value = scheduler_param_value)
 
+        def _calculate_and_log_aggregate_metrics(self):
+        print(f'Logging into comet-ml')
+        for metric in self.metrics:
+            metric_name = metric.__name__
+            metric_value = metric(output['targets'], output['predictions'])
+            performance_metrics[metric_name] = metric_value
+            self.logger.log_metric(f'{dataset} {metric_name}', metric_value, step = epoch)
+            print(f'{metric_name}: {metric_value}')
+
+        return performance_metrics
+
+    def _calculate_and_log_running_metrics(self):
+        print(f'Logging into comet-ml')
+        for metric_name, metric_values in running_metrics.items():
+            if metric_name == 'fps':
+                metric_value = np.mean(metric_values)
+                performance_metrics[metric_name] = np.mean(metric_value)
+            elif metric_name == 'loss':
+                metric_value = np.sum(metric_values)
+            performance_metrics[metric_name] = metric_value
+            print(f'{metric_name}: {metric_value}')
+            self.logger.log_metric(f'{dataset} {metric_name}', metric_value, step = epoch)
+        return performance_metrics
+
 
     def _train_for_single_dataset(self, dataset: dict, epoch: int):
-        running_metrics = defaultdict(list)
-        output = defaultdict(list)
+        self.running_metrics = defaultdict(list)
+        self.prediction_output = defaultdict(list)
+
         performance_metrics = defaultdict(list)
         if bool(re.search("train", dataset)):
             print(f'Training {dataset}')
@@ -108,33 +135,17 @@ class Trainer ():
                         batch_loss.backward()
                         self.optimizer.step()
                     
-                    running_metrics['loss'].append(batch_loss.item() / len(targets))
-                    running_metrics['fps'].append(len(targets) / elapsed())
-                    output['confidence_scores'].extend(confidence_scores)
-                    output['predictions'].extend(predictions)
-                    output['targets'].extend(targets)
+                    self.running_metrics['loss'].append(batch_loss.item() / len(targets))
+                    self.running_metrics['fps'].append(len(targets) / elapsed())
+                    self.prediction_output['confidence_scores'].extend(confidence_scores)
+                    self.prediction_output['predictions'].extend(predictions)
+                    self.prediction_output['targets'].extend(targets)
                     
-
-        print(f'Logging into comet-ml')
-        for metric in self.metrics:
-            metric_name = metric.__name__
-            metric_value = metric(output['targets'], output['predictions'])
-            performance_metrics[metric_name] = metric_value
-            print(f'{metric_name}: {metric_value}')
-            self.logger.log_metric(f'{dataset} {metric_name}', metric_value, step = epoch)
-
-        
-        for metric_name, metric_values in running_metrics.items():
-            if metric_name == 'fps':
-                metric_value = np.mean(metric_values)
-                performance_metrics[metric_name] = np.mean(metric_value)
-            elif metric_name == 'loss':
-                metric_value = np.sum(metric_values)
-            performance_metrics[metric_name] = metric_value
-            print(f'{metric_name}: {metric_value}')
-            self.logger.log_metric(f'{dataset} {metric_name}', metric_value, step = epoch)
+        performance_metrics = self._calculate_and_log_aggregate_metrics()
+        performance_metrics.update(self._calculate_and_log_running_metrics())
         
         return performance_metrics
+
 
     def _train_for_all_datasets_in_single_epoch(self, epoch: int):
         training_performance_metrics = defaultdict(list)
