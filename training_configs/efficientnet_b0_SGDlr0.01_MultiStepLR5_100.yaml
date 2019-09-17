@@ -56,7 +56,7 @@ partition:
       batch_size: 8
       shuffle: True
       pin_memory: True
-      num_workers: 4
+      num_workers: 1
 
   validation_nodeflux_employee:
     transforms_module: validation_transforms
@@ -75,5 +75,5 @@ partition:
       batch_size: 8
       shuffle: False
       pin_memory: True
-      num_workers: 4
+      num_workers: 1
 
