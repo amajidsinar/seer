@@ -109,16 +109,6 @@ def create_instance_metrics(config_params: dict, module, *args, **kwargs):
     print(f'create_instanced {config_params["module"]}')
     return instances
 
-def create_object(config_params: dict, module):
-    object = getattr(module, config_params['module'])
-    print(f'create_instanced module {module.__name__}')
-    return object
-
-def store_hyperparams(config_params, hyperparam_name):
-    hyperparams = {f'{hyperparam_name}': config_params['module']}
-    for hyperparam_name, hyperparam_value in config_params['args'].items():
-        hyperparams[hyperparam_name] = hyperparam_value
-    return hyperparams
 
 
 def get_center_face_bbox_index(img, face_boxes):
