@@ -77,6 +77,7 @@ class Trainer():
                 logger.log_parameter(name = scheduler_param_name, value = scheduler_param_value)
 
     def _calculate_and_log_aggregate_metrics(self, dataset, epoch):
+        print("###################################################################")
         performance_metrics = defaultdict(list)
         print(f'Logging into comet-ml')
         for metric in self.metrics:
@@ -85,7 +86,7 @@ class Trainer():
             performance_metrics[metric_name] = metric_value
             self.logger.log_metric(f'{dataset} {metric_name}', metric_value, step = epoch)
             print(f'{metric_name}: {metric_value}')
-
+        
         return performance_metrics
 
     def _calculate_and_log_running_metrics(self, dataset, epoch):
@@ -157,30 +158,35 @@ class Trainer():
         self.logger.log_metric(name = 'lr', value = lr, step = epoch)
         for dataset in self.dataloaders.keys():
             single_dataset_performance_metrics = self._train_for_single_dataset(dataset, epoch)
+            
             for metric_name, metric_value in single_dataset_performance_metrics.items():
+                
                 if bool(re.search('train', dataset)):
                     training_performance_metrics[metric_name].append(metric_value)
+                    
                 elif bool(re.search('val', dataset)):
                     validation_performance_metrics[metric_name].append(metric_value)
-
+            
+        #pdb.set_trace()
         if self.lr_scheduler:
             self.lr_scheduler.step()
-        print(f'#################################################################################')
-
-        for metric_name, metric_value in training_performance_metrics.items():
-            average_metric_value = np.mean(metric_value)
-            print(f'average training {metric_name}: {average_metric_value}')
-            self.logger.log_metric(f'average training {metric_name}', average_metric_value, step = epoch)
-            training_performance_metrics[metric_name] = average_metric_value
-
-        for metric_name, metric_value in validation_performance_metrics.items():
-            average_metric_value = np.mean(metric_value)
-            print(f'average validation {metric_name}: {average_metric_value}')
-            self.logger.log_metric(f'average validation {metric_name}', average_metric_value, step = epoch)
-            validation_performance_metrics[metric_name] = average_metric_value
         
 
+        training_performance_metrics = self._calculate_and_log_average_metrics(training_performance_metrics, epoch, "average training")
+        print(f'#################################################################################')
+        validation_performance_metrics = self._calculate_and_log_average_metrics(validation_performance_metrics, epoch, "average validation")
+        print(f'#################################################################################')        
+
         return validation_performance_metrics
+
+    def _calculate_and_log_average_metrics(self, performance_metrics, epoch, prefix):
+        for metric_name, metric_value in performance_metrics.items():
+            average_metric_value = np.mean(metric_value)
+            print(f'{prefix} {metric_name}: {average_metric_value}')
+            self.logger.log_metric(f'{prefix} {metric_name}', average_metric_value, step = epoch)
+            performance_metrics[metric_name] = average_metric_value
+        return performance_metrics
+
     
     def _save_model(self, suffix : str, best_metric: dict, epoch: int):
 
@@ -189,7 +195,6 @@ class Trainer():
 
         print(f'Saving training model at epoch {epoch}')
         print(f'Saving training model at {checkpoint_pth}')
-        # wandb.save(str(Path.cwd() / checkpoint_pth))
 
         model_params = {
             'epoch': epoch,
