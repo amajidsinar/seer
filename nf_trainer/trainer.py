@@ -10,7 +10,7 @@ from typing import Dict, Callable, List, Sequence, Optional
 import re
 from pathlib import Path
 
-__all__ = ['ClassificationTrainer']
+__all__ = ['Trainer']
 
 class Trainer():
     def __init__(self, 
@@ -76,7 +76,7 @@ class Trainer():
             for scheduler_param_name, scheduler_param_value in self.lr_scheduler.__dict__.items():
                 logger.log_parameter(name = scheduler_param_name, value = scheduler_param_value)
 
-        def _calculate_and_log_aggregate_metrics(self):
+    def _calculate_and_log_aggregate_metrics(self):
         print(f'Logging into comet-ml')
         for metric in self.metrics:
             metric_name = metric.__name__

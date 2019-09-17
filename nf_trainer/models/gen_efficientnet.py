@@ -28,7 +28,7 @@ from .registry import register_model
 from .helpers import load_pretrained
 from .adaptive_avgmax_pool import SelectAdaptivePool2d
 from .conv2d_helpers import select_conv2d
-from timm.data import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD
+from .constants import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD
 
 
 __all__ = ['GenEfficientNet']

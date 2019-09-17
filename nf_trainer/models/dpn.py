@@ -17,7 +17,7 @@ from collections import OrderedDict
 from .registry import register_model
 from .helpers import load_pretrained
 from .adaptive_avgmax_pool import select_adaptive_pool2d
-from timm.data import IMAGENET_DPN_MEAN, IMAGENET_DPN_STD
+from .constants import IMAGENET_DPN_MEAN, IMAGENET_DPN_STD
 
 
 __all__ = ['DPN']

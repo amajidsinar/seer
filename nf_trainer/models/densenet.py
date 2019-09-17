@@ -11,7 +11,7 @@ import torch.nn.functional as F
 from .registry import register_model
 from .helpers import load_pretrained
 from .adaptive_avgmax_pool import select_adaptive_pool2d
-from timm.data import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD
+from .constants import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD
 import re
 
 __all__ = ['DenseNet']

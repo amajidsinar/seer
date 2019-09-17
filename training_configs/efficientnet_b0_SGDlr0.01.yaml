@@ -27,7 +27,7 @@ comet_ml:
   args:
     api_key: 9mPrEpU6XpLG2Pc6MO811ca4e
     project_name: train-face-gender
-    workspace: hyperion-rg
+    workspace: amajidsinar
 
 metrics:
   module: [accuracy, precision, recall, f1]
