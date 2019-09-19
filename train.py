@@ -13,7 +13,7 @@ import torch
 import torchetl
 
 # user
-from nf_trainer.utils import elapsed_timer, create_instance, create_instance_dataloader, create_instance_metrics, store_hyperparams
+from nf_trainer.utils import elapsed_timer, create_instance, create_instance_dataloader, create_instance_metrics
 import nf_trainer.datasets as nf_datasets
 import nf_trainer.dataloaders as nf_dataloaders
 import nf_trainer.models as nf_models
@@ -34,11 +34,11 @@ with open(args.configuration_path, 'r') as f:
         print(f'File not found at {args.configuration_path}')
         exit()
 
-config['model']['args']['gpu_id'] = args.gpu_id
-device = torch.device(f"cuda:{config['model']['args']['gpu_id']}" if config['model']['args']['gpu_id'] >= 0 else "cpu")
+device = torch.device(f"cuda:{args.gpu_id}" if args.gpu_id >= 0 else "cpu")
 print(f'device {device}')
 
 model = create_instance(config['model'], nf_models)
+model.to(device)
 
 optimizer = create_instance(config['optimizer'], torch.optim, params=model.parameters())
 
