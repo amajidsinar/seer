@@ -140,54 +140,93 @@ def get_center_face_bbox_index(img, face_boxes):
 	return selected_index
 
 
-def dump_bbox_and_landmark_to_csv(face_detection: object, parent_directory: PosixPath, csv_file:PosixPath, save_to: str):
-    print(f'Creating file in {save_to}')
-    df = pd.read_csv(str(csv_file))
-    path = df.iloc[:,0]
-    label = df.iloc[:,1]
+# def dump_bbox_and_landmark_to_csv(face_detection: object, parent_directory: PosixPath, csv_file:PosixPath, save_to: str):
+#     print(f'Creating file in {save_to}')
+#     df = pd.read_csv(str(csv_file))
+#     path = df.iloc[:,0]
+#     label = df.iloc[:,1]
+
+#     pdb.set_trace()
+
+#     header = ["path", "label", "partition"]
+#     for bbox_coordinate in ["min", "max"]:
+#         header += [f'bbox_x_{bbox_coordinate}', f'bbox_y_{bbox_coordinate}']
+#     for landmark_coordinate in range(5):
+#         header += [f'landmark_x_row_{landmark_coordinate}', f'landmark_y_row_{landmark_coordinate}']
 
 
-    header = ["path", "label"]
-    for bbox_coordinate in ["min", "max"]:
-        header += [f'bbox_x_{bbox_coordinate}', f'bbox_y_{bbox_coordinate}']
-    for landmark_coordinate in range(5):
-        header += [f'landmark_x_row_{landmark_coordinate}', f'landmark_y_row_{landmark_coordinate}']
-
-
-    with open(save_to, 'w', newline='') as csvfile:
-        csv_writer = csv.writer(csvfile)
-        csv_writer.writerow(header)
-        for index in tqdm(range(len(df))):
-            image_path = parent_directory / df.iloc[index, 0]
-            image_original = cv2.imread(str(image_path))
-            image_blob = np.expand_dims(image_original, axis=0)
-            try:
-                face_blob, landmark_blob = face_detection.detect(image_blob)
-                index_of_biggest_face = get_center_face_bbox_index(image_original, face_blob[0])
-                bbox_and_confidence, landmark = face_blob[0][index_of_biggest_face], landmark_blob[0][index_of_biggest_face]
-                bbox = bbox_and_confidence[:4]
-                row = [path[index]]
-                row += [label[index]]
-                for i in bbox:
-                    row += [i]
+#     with open(save_to, 'w', newline='') as csvfile:
+#         csv_writer = csv.writer(csvfile)
+#         csv_writer.writerow(header)
+#         for index in tqdm(range(len(df))):
+#             image_path = parent_directory / df.iloc[index, 0]
+#             image_original = cv2.imread(str(image_path))
+#             image_blob = np.expand_dims(image_original, axis=0)
+#             try:
+#                 face_blob, landmark_blob = face_detection.detect(image_blob)
+#                 index_of_biggest_face = get_center_face_bbox_index(image_original, face_blob[0])
+#                 bbox_and_confidence, landmark = face_blob[0][index_of_biggest_face], landmark_blob[0][index_of_biggest_face]
+#                 bbox = bbox_and_confidence[:4]
+#                 row = [path[index]]
+#                 row += [label[index]]
+#                 for i in bbox:
+#                     row += [i]
                 
-                for row_index in range(landmark.shape[0]):
-                    for column_index in range(landmark.shape[1]):
-                        row += [landmark[row_index][column_index]]
+#                 for row_index in range(landmark.shape[0]):
+#                     for column_index in range(landmark.shape[1]):
+#                         row += [landmark[row_index][column_index]]
 
-                csv_writer.writerow(row)
+#                 csv_writer.writerow(row)
 
-            except ValueError:
-                print(f"Frontal face not detected on path {path[index]}")
-                pass
+#             except ValueError:
+#                 print(f"Frontal face not detected on path {path[index]}")
+#                 pass
 
-            except cv2.error:
-                pass
+#             except cv2.error:
+#                 pass
             
-            except AttributeError:
-                print(f"Face not detected on path {path[index]}")
+#             except AttributeError:
+#                 print(f"Face not detected on path {path[index]}")
 
+
+#     print(f'Sucessfully dump into {save_to}')
+    
+def dump_bbox_and_landmark_to_csv(face_detection, array, columns, parent_directory, save_to):
+    bbox_and_landmark_matrix = np.zeros((array.shape[0], len(columns)-array.shape[1]))
+
+
+    for index in tqdm(range(len(array))):
+        image_path = parent_directory / array[index, 0]
+        image_original = cv2.imread(str(image_path))
+        image_blob = np.expand_dims(image_original, axis=0)
+        try:
+            face_blob, landmark_blob = face_detection.detect(image_blob)
+            index_of_biggest_face = get_center_face_bbox_index(image_original, face_blob[0])
+            bbox_and_confidence, landmark = face_blob[0][index_of_biggest_face], landmark_blob[0][index_of_biggest_face]
+            bbox = bbox_and_confidence[:4]
+            landmark = landmark.reshape(-1,)
+            bbox_and_landmark_value = np.concatenate((bbox,landmark))
+
+        except ValueError:
+            bbox_and_landmark_value = np.zeros((1, 14))
+            print(f"Frontal face not detected on path {image_path}")
+            pass
+
+        except cv2.error:
+            bbox_and_landmark_value = np.zeros((1, 14))
+            pass
+        
+        except AttributeError:
+            bbox_and_landmark_value = np.zeros((1, 14))
+            print(f"Face not detected on path {image_path}")
+
+        
+        bbox_and_landmark_matrix[index] = bbox_and_landmark_value
+
+    metadata_matrix = np.c_[array, bbox_and_landmark_matrix]
+    df = pd.DataFrame(data=metadata_matrix, columns=columns)
+    df.to_csv(save_to, index=False)
 
     print(f'Sucessfully dump into {save_to}')
-    
+
 

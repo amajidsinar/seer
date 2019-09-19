@@ -13,7 +13,7 @@ import torch
 import torchetl
 
 # user
-from nf_trainer.utils import elapsed_timer, create_instance, create_instance_dataloader, create_instance_metrics, store_hyperparams
+from nf_trainer.utils import elapsed_timer, create_instance, create_instance_dataloader, create_instance_metrics
 import nf_trainer.datasets as nf_datasets
 import nf_trainer.dataloaders as nf_dataloaders
 import nf_trainer.models as nf_models
