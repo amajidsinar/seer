@@ -17,8 +17,7 @@ from typing import Iterable
 import pandas as pd
 import csv
 import nonechucks as nc
-
-
+from typing import List
 
 def compute_normalization_values(files: Iterable):
     mean, std = 0., 0.
@@ -59,7 +58,7 @@ def create_instance(config_params: dict, module: object, **kwargs):
     print(f'create_instanced module {module.__name__}')
     return instance
 
-def create_instance_dataloader(config_params, transforms_module, dataset_module, dataloader_module):
+def create_instance_dataloader(config_params: dict, transforms_module, dataset_module, dataloader_module):
     """
     apply function 
 
@@ -140,12 +139,20 @@ def get_center_face_bbox_index(img, face_boxes):
 	return selected_index
 
     
-def dump_bbox_and_landmark_to_csv(face_detection, array, columns, parent_directory, save_to):
+def dump_bbox_and_landmark_to_csv(face_detection: object, 
+                                  array: np.ndarray, 
+                                  columns: List[str], 
+                                  parent_directory: str, 
+                                  save_to: str):
+
     bbox_and_landmark_matrix = np.zeros((array.shape[0], len(columns)-array.shape[1]))
 
 
     for index in tqdm(range(len(array))):
-        image_path = parent_directory / array[index, 0]
+        try:
+            image_path = parent_directory / array[index, 0]
+        except TypeError:
+            pdb.set_trace()
         image_original = cv2.imread(str(image_path))
         image_blob = np.expand_dims(image_original, axis=0)
         try:
@@ -164,6 +171,9 @@ def dump_bbox_and_landmark_to_csv(face_detection, array, columns, parent_directo
         except cv2.error:
             bbox_and_landmark_value = np.zeros((1, 14))
             pass
+
+        except TypeError:
+            pdb.set_trace()
         
         except AttributeError:
             bbox_and_landmark_value = np.zeros((1, 14))
@@ -179,3 +189,10 @@ def dump_bbox_and_landmark_to_csv(face_detection, array, columns, parent_directo
     print(f'Sucessfully dump into {save_to}')
 
 
+def filter_variable(filtered_variable, threshold, filter_more_than):
+    if filter_more_than == True:
+        remaining_index = filtered_variable[filtered_variable > threshold].index.values
+    elif filter_more_than == False:
+        remaining_index = filtered_variable[filtered_variable < threshold].index.values
+    
+    return remaining_index
