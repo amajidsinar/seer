@@ -16,7 +16,6 @@ import pandas as pd
 import cv2
 import numpy as np
 from skimage import transform as trans
-from nodeflux.face_detection.retinaface import RetinaFace
 
 # user
 from nodeflux.face_alignment.arcface_alignment import ArcFaceAlignment
