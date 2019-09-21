@@ -29,7 +29,6 @@ class NodefluxDataset(Dataset):
                 dataset_name: str,
                 parent_directory: str, 
                 csv_file: str,  
-                project_key: str,
                 split_key: str,
                 label_type_key: str,
                 label_encoding: Dict[str, int] = None,
@@ -56,13 +55,8 @@ class NodefluxDataset(Dataset):
         self.label_type_key = label_type_key
         try:
             metadata_df = pd.read_csv(str(csv_file))
-            
-            
-
             # filter by split key
             metadata_df = metadata_df[metadata_df['split'] == split_key]
-            # filter by project key
-            metadata_df = metadata_df[metadata_df['project'] == project_key]
             # filter by label type
             metadata_df = metadata_df[metadata_df['label_type'] == label_type_key]
             # label_value
