@@ -26,11 +26,11 @@ __all__ = ["NodefluxDataset"]
 
 class NodefluxDataset(Dataset):
     def __init__(self, 
-                dataset_name: str,
                 parent_directory: str, 
                 csv_file: str,  
                 split_key: str,
                 label_type_key: str,
+                dataset_name: str = None,
                 label_encoding: Dict[str, int] = None,
                 transform: Callable = None,
                 ) -> None:
@@ -61,8 +61,9 @@ class NodefluxDataset(Dataset):
             metadata_df = metadata_df[metadata_df['label_type'] == label_type_key]
             # label_value
             #filter by dataset name
-            metadata_df["dataset_name"] = metadata_df['path'].apply(lambda x: Path(x).parts[0])
-            metadata_df = metadata_df[metadata_df['dataset_name'] == dataset_name]
+            if dataset_name:
+                metadata_df["dataset_name"] = metadata_df['path'].apply(lambda x: Path(x).parts[0])
+                metadata_df = metadata_df[metadata_df['dataset_name'] == dataset_name]
 
             if label_encoding:
                 for current_label, desired_label in label_encoding.items():
