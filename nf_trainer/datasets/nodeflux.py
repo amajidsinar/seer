@@ -71,7 +71,8 @@ class NodefluxDataset(Dataset):
 
             self.metadata_df = metadata_df.reset_index(drop=True)
             self.label_value = self.metadata_df['label_value'].apply(lambda x: x.split(' '))
-            
+        
+            # TODO ADD FILTER FAILED DETECTION
             # landmark_df = metadata_df.iloc[:, landmark_column_index[0]:landmark_column_index[1]]
             # landmark_df = landmark_df.replace(0, np.nan)
             # landmark_df = landmark_df.dropna(how='all')
