@@ -1,5 +1,5 @@
-# nf_trainer
-This repository contains trainer for image classification tasks. However, it is highly possible to extend this repository for other tasks, for instance object detection
+# seer
+This repository contains trainer for image classification tasks. However, it is highly possible to extend this repository for other tasks, for instance object detection.
 
 
 At the moment, you can easily:  
@@ -109,7 +109,7 @@ Configuration file name is very important, since the model name is derived from 
 
 Here is the structure of the library
 ```
-- nf_trainer
+- seer
     - architecture
     - dataloaders
     - datasets

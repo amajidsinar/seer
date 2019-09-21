@@ -13,13 +13,13 @@ import torch
 import torchetl
 
 # user
-from nf_trainer.utils import elapsed_timer, create_instance, create_instance_dataloader, create_instance_metrics
-import nf_trainer.datasets as nf_datasets
-import nf_trainer.dataloaders as nf_dataloaders
-import nf_trainer.models as nf_models
-import nf_trainer.metrics as nf_metrics
-import nf_trainer.transforms as nf_transforms
-from nf_trainer.trainer import Trainer
+from seer.utils import elapsed_timer, create_instance, create_instance_dataloader, create_instance_metrics
+import seer.datasets as nf_datasets
+import seer.dataloaders as nf_dataloaders
+import seer.models as nf_models
+import seer.metrics as nf_metrics
+import seer.transforms as nf_transforms
+from seer.trainer import Trainer
 
 parser = argparse.ArgumentParser(description="Training pipeline for predicting gender based on face")
 parser.add_argument('-c', '--configuration_path' ,type=str, help='path to experiment configuration file', default='training_configs/exp41.yaml')

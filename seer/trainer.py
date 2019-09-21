@@ -4,7 +4,7 @@ import torch
 import pdb
 from sklearn.metrics import precision_score, accuracy_score, recall_score, f1_score
 import numpy as np
-from nf_trainer.utils import elapsed_timer
+from seer.utils import elapsed_timer
 from collections import defaultdict
 from typing import Dict, Callable, List, Sequence, Optional
 import re
